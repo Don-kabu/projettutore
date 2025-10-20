@@ -115,3 +115,15 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DIRS = [BASE_DIR /"templates"],
+
+# Configuration Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.hostinger.com'  # ou smtp de ton fournisseur
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'kabu.d@calculus-system.net'
+EMAIL_HOST_PASSWORD = 'RO@adm#20'  # mot de passe de ton compte email
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Pour le développement, vous pouvez utiliser la console
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

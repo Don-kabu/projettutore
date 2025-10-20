@@ -3,4 +3,4 @@ from .models import Fuite
 
 @admin.register(Fuite)
 class FuiteAdmin(admin.ModelAdmin):
-    list_display = ('description','latitude','longitude','date_signalement')
+    list_display = ('complaint_name','phone','is_owner')

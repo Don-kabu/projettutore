@@ -22,5 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.accueil, name='accueil'),
     path('base/', views.base, name='base'),
-    path('signaler/', views.signaler, name='signaler'),
+    path('signaler/', views.signaler1, name='signaler.step1'),
+    path('signaler/<int:pk>', views.signaler2, name='signaler.step2'),
+    path('signaler/<int:pk>/otp', views.verifyotp, name='verify_phone_number'),
 ]
