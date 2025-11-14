@@ -1,0 +1,221 @@
+{% extends "email/base.html" %}
+
+{% block title %}Mise à jour de votre signalement - Regideso{% endblock %}
+
+{% block header_title %}Mise à jour 📊{% endblock %}
+{% block header_subtitle %}Nouvelles informations sur votre signalement{% endblock %}
+
+{% block content %}
+    <h2>Bonjour {{ fuite.complaint_name|default:"Citoyen" }},</h2>
+    
+    <p>Nous souhaitons vous tenir informé(e) de l'évolution de votre signalement de fuite d'eau.</p>
+    
+    <!-- Statut principal -->
+    <div class="otp-container" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #10b981;">
+        <div class="otp-label" style="color: #065f46;">Statut actuel</div>
+        <div style="font-size: 24px; font-weight: 700; color: #059669; margin: 12px 0;">
+            {% if status == 'verified' %}
+                ✅ VÉRIFIÉ
+            {% elif status == 'in_progress' %}
+                🔄 EN COURS
+            {% elif status == 'resolved' %}
+                ✅ RÉSOLU
+            {% elif status == 'closed' %}
+                📋 CLÔTURÉ
+            {% else %}
+                📝 {{ status|upper }}
+            {% endif %}
+        </div>
+        <div style="color: #065f46; font-size: 14px;">
+            Signalement #{{ fuite.id|stringformat:"05d" }}
+        </div>
+    </div>
+    
+    <!-- Détails du signalement -->
+    <div class="info-card">
+        <h3>🔍 Informations du signalement</h3>
+        
+        <div class="info-row">
+            <span class="info-label">📋 Numéro</span>
+            <span class="info-value"><strong>#{{ fuite.id|stringformat:"05d" }}</strong></span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📅 Date signalement</span>
+            <span class="info-value">{{ fuite.date_creation|date:"d/m/Y à H:i" }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📍 Lieu</span>
+            <span class="info-value">
+                {{ fuite.quartier|default:"Non spécifié" }}, 
+                {{ fuite.commune|default:"Non spécifiée" }}
+            </span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">⚡ Gravité</span>
+            <span class="info-value">
+                {% if fuite.gravite == 'critique' %}
+                    <span style="color: #dc2626; font-weight: 600;">🚨 Critique</span>
+                {% elif fuite.gravite == 'moyenne' %}
+                    <span style="color: #f59e0b; font-weight: 600;">⚠️ Moyenne</span>
+                {% else %}
+                    <span style="color: #10b981; font-weight: 600;">ℹ️ Faible</span>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    
+    <!-- Progression -->
+    <div class="info-card">
+        <h3>📈 Progression du traitement</h3>
+        
+        <div style="display: flex; justify-content: space-between; margin: 20px 0; flex-wrap: wrap; gap: 10px;">
+            <div style="text-align: center; flex: 1; min-width: 120px;">
+                <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+                <div style="font-size: 12px; color: #10b981; font-weight: 600;">REÇU</div>
+                <div style="font-size: 11px; color: #6b7280;">{{ fuite.date_creation|date:"d/m" }}</div>
+            </div>
+            
+            <div style="text-align: center; flex: 1; min-width: 120px;">
+                {% if status == 'verified' or status == 'in_progress' or status == 'resolved' or status == 'closed' %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+                    <div style="font-size: 12px; color: #10b981; font-weight: 600;">VÉRIFIÉ</div>
+                {% else %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">⏳</div>
+                    <div style="font-size: 12px; color: #f59e0b; font-weight: 600;">VÉRIFICATION</div>
+                {% endif %}
+                <div style="font-size: 11px; color: #6b7280;">
+                    {% if fuite.verified_opt %}{{ fuite.verified_opt|date:"d/m" }}{% endif %}
+                </div>
+            </div>
+            
+            <div style="text-align: center; flex: 1; min-width: 120px;">
+                {% if status == 'in_progress' or status == 'resolved' or status == 'closed' %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">🔄</div>
+                    <div style="font-size: 12px; color: #3b82f6; font-weight: 600;">EN COURS</div>
+                {% else %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">⏸️</div>
+                    <div style="font-size: 12px; color: #6b7280; font-weight: 600;">EN ATTENTE</div>
+                {% endif %}
+                <div style="font-size: 11px; color: #6b7280;"></div>
+            </div>
+            
+            <div style="text-align: center; flex: 1; min-width: 120px;">
+                {% if status == 'resolved' or status == 'closed' %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">✅</div>
+                    <div style="font-size: 12px; color: #10b981; font-weight: 600;">RÉSOLU</div>
+                {% else %}
+                    <div style="font-size: 24px; margin-bottom: 8px;">⏳</div>
+                    <div style="font-size: 12px; color: #6b7280; font-weight: 600;">EN ATTENTE</div>
+                {% endif %}
+                <div style="font-size: 11px; color: #6b7280;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message contextuel selon le statut -->
+    {% if status == 'verified' %}
+        <div class="alert alert-success">
+            <strong>✅ Signalement vérifié !</strong><br>
+            Votre signalement a été examiné et validé par nos équipes. Une mission d'intervention va être programmée prochainement.
+        </div>
+        
+        <h3 style="color: #1f2937;">🔜 Prochaines étapes</h3>
+        <ul style="color: #4b5563; line-height: 1.6;">
+            <li>📋 <strong>Planification :</strong> Nos équipes vont programmer une mission d'intervention</li>
+            <li>👷‍♂️ <strong>Attribution :</strong> Une équipe technique sera assignée</li>
+            <li>📱 <strong>Notification :</strong> Vous recevrez tous les détails par email/SMS</li>
+            <li>🔧 <strong>Intervention :</strong> Résolution du problème sur site</li>
+        </ul>
+        
+    {% elif status == 'in_progress' %}
+        <div class="alert alert-info">
+            <strong>🔄 Intervention en cours !</strong><br>
+            Nos équipes travaillent activement à la résolution de votre signalement. L'intervention est en cours.
+        </div>
+        
+        <h3 style="color: #1f2937;">🛠️ Intervention active</h3>
+        <p>Nos techniciens sont actuellement sur le terrain et travaillent à résoudre le problème de fuite. Merci de votre patience.</p>
+        
+        <div class="info-card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe);">
+            <h3>⏰ Durée estimée</h3>
+            <p style="margin: 0; color: #1e3a8a;">
+                Selon la complexité du problème, l'intervention peut prendre entre quelques heures et quelques jours. Vous serez informé(e) dès la résolution.
+            </p>
+        </div>
+        
+    {% elif status == 'resolved' %}
+        <div class="alert alert-success">
+            <strong>🎉 Problème résolu !</strong><br>
+            Excellente nouvelle ! Le problème de fuite a été résolu avec succès par nos équipes.
+        </div>
+        
+        <h3 style="color: #1f2937;">✅ Mission accomplie</h3>
+        <p>Nos techniciens ont terminé l'intervention et le problème de fuite d'eau est maintenant résolu. Vous devriez constater une amélioration immédiate.</p>
+        
+        <div class="info-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+            <h3>🔍 Vérification recommandée</h3>
+            <p style="margin: 0; color: #065f46;">
+                Nous vous recommandons de vérifier la zone dans les prochains jours. Si vous constatez que le problème persiste, n'hésitez pas à nous recontacter.
+            </p>
+        </div>
+        
+        <!-- Évaluation du service -->
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="#" class="btn">
+                ⭐ Évaluer notre intervention
+            </a>
+        </div>
+        
+    {% elif status == 'closed' %}
+        <div class="alert alert-info">
+            <strong>📋 Dossier clôturé</strong><br>
+            Votre signalement a été traité et le dossier est maintenant officiellement clôturé.
+        </div>
+        
+        <h3 style="color: #1f2937;">📋 Clôture du dossier</h3>
+        <p>Le traitement de votre signalement est terminé. Le dossier est archivé dans nos systèmes pour suivi historique.</p>
+        
+    {% else %}
+        <div class="alert alert-info">
+            <strong>📊 Mise à jour de statut</strong><br>
+            Le statut de votre signalement a été mis à jour dans notre système.
+        </div>
+    {% endif %}
+    
+    {% if message %}
+        <div class="info-card">
+            <h3>💬 Message de l'équipe</h3>
+            <p style="margin: 0; color: #1f2937; font-style: italic;">
+                "{{ message }}"
+            </p>
+        </div>
+    {% endif %}
+    
+    <!-- Actions disponibles -->
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="#" class="btn">
+            🔍 Voir les détails complets
+        </a>
+        <br><br>
+        {% if status != 'closed' %}
+        <a href="#" class="btn btn-secondary">
+            📞 Contacter l'équipe
+        </a>
+        {% endif %}
+    </div>
+    
+    <!-- Informations de contact -->
+    {% if status == 'in_progress' %}
+    <div class="alert alert-warning">
+        <strong>📞 Besoin d'informations ?</strong><br>
+        Si vous avez des questions sur l'intervention en cours, contactez-nous au <strong>+243 XXX XXX XXX</strong>
+    </div>
+    {% endif %}
+    
+    <p style="margin-top: 30px; color: #6b7280; font-style: italic; text-align: center;">
+        Merci pour votre signalement et votre patience. Ensemble, nous préservons nos ressources en eau ! 🌍💧
+    </p>
+{% endblock %}

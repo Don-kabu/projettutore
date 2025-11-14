@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Test CSS Formulaires - Regideso{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🎨 Test CSS Formulaires</h1>
+                <p class="text-gray-600">Vérification des couleurs et styles des formulaires</p>
+            </div>
+
+            <!-- Formulaire de test -->
+            <div class="form-container bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-xl font-bold mb-6">Formulaire de Test</h2>
+                
+                <form class="space-y-6">
+                    <!-- Champ texte -->
+                    <div class="form-group">
+                        <label for="test-text" class="form-label">
+                            📝 Champ Texte <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="test-text" 
+                            class="form-input"
+                            placeholder="Tapez votre texte ici"
+                            value="Texte de test - doit être en noir"
+                        >
+                        <div class="helptext">
+                            Ce texte d'aide doit être visible et lisible.
+                        </div>
+                    </div>
+
+                    <!-- Champ email -->
+                    <div class="form-group">
+                        <label for="test-email" class="form-label">
+                            📧 Email
+                        </label>
+                        <input 
+                            type="email" 
+                            id="test-email" 
+                            class="form-input"
+                            placeholder="votre@email.com"
+                        >
+                    </div>
+
+                    <!-- Champ select -->
+                    <div class="form-group">
+                        <label for="test-select" class="form-label">
+                            📍 Commune
+                        </label>
+                        <select id="test-select" class="form-select">
+                            <option value="">Sélectionnez une commune...</option>
+                            <option value="gombe">Gombe</option>
+                            <option value="kinshasa">Kinshasa</option>
+                            <option value="bandalungwa">Bandalungwa</option>
+                        </select>
+                    </div>
+
+                    <!-- Champ textarea -->
+                    <div class="form-group">
+                        <label for="test-textarea" class="form-label">
+                            📝 Description
+                        </label>
+                        <textarea 
+                            id="test-textarea" 
+                            class="form-textarea"
+                            rows="4"
+                            placeholder="Décrivez le problème..."
+                        >Texte dans le textarea - doit être en noir</textarea>
+                    </div>
+
+                    <!-- Champ avec erreur -->
+                    <div class="form-group error">
+                        <label for="test-error" class="form-label">
+                            ❌ Champ avec erreur
+                        </label>
+                        <input 
+                            type="text" 
+                            id="test-error" 
+                            class="form-input"
+                            value="Valeur incorrecte"
+                        >
+                        <ul class="errorlist">
+                            <li>Ce champ contient une erreur de validation</li>
+                        </ul>
+                    </div>
+
+                    <!-- Champ adresse avec bouton -->
+                    <div class="form-group">
+                        <label for="test-address" class="form-label">
+                            🗺️ Adresse avec géolocalisation
+                        </label>
+                        <div class="address-input-wrapper">
+                            <input 
+                                type="text" 
+                                id="test-address" 
+                                class="form-input"
+                                placeholder="Adresse exacte"
+                                value="Avenue des Martyrs, 123"
+                            >
+                            <button type="button" class="use-location-btn">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                Ma position
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Checkbox -->
+                    <div class="form-group">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" id="test-checkbox" class="w-5 h-5 text-blue-600">
+                            <label for="test-checkbox" class="form-label mb-0">
+                                ✅ Case à cocher - texte doit être noir
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Boutons -->
+                    <div class="flex space-x-4">
+                        <button type="submit" class="agent-btn">
+                            🚀 Bouton Principal
+                        </button>
+                        <button type="button" class="agent-btn" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            ✅ Bouton Secondaire
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Alertes de test -->
+            <div class="mt-8 space-y-4">
+                <div class="agent-alert success">
+                    ✅ <strong>Succès :</strong> Texte en vert foncé sur fond vert clair.
+                </div>
+                <div class="agent-alert error">
+                    ❌ <strong>Erreur :</strong> Texte en rouge foncé sur fond rouge clair.
+                </div>
+                <div class="agent-alert warning">
+                    ⚠️ <strong>Attention :</strong> Texte en orange foncé sur fond orange clair.
+                </div>
+                <div class="agent-alert info">
+                    ℹ️ <strong>Information :</strong> Texte en bleu foncé sur fond bleu clair.
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="mt-8 bg-blue-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-blue-800 mb-3">🎯 Points à vérifier :</h3>
+                <ul class="text-blue-700 space-y-2">
+                    <li>• <strong>Labels :</strong> Doivent être en noir/gris très foncé</li>
+                    <li>• <strong>Texte saisi :</strong> Doit être en noir dans tous les champs</li>
+                    <li>• <strong>Placeholders :</strong> Doivent être en gris moyen</li>
+                    <li>• <strong>Erreurs :</strong> Doivent être visibles en rouge</li>
+                    <li>• <strong>Aides :</strong> Doivent être lisibles en gris</li>
+                    <li>• <strong>Boutons :</strong> Texte blanc sur fond coloré</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Test des interactions
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Test CSS Formulaires chargé');
+    
+    // Test focus
+    document.querySelectorAll('input, textarea, select').forEach(field => {
+        field.addEventListener('focus', function() {
+            console.log('Focus sur:', this.id, 'Couleur calculée:', getComputedStyle(this).color);
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* FORCE ABSOLUE DE LA COULEUR NOIRE POUR LES INPUTS */
+* input[type="text"],
+* input[type="email"], 
+* input[type="tel"],
+* input[type="password"],
+* input[type="number"],
+* textarea,
+* select,
+html * input,
+html * textarea,
+html * select,
+body * input,
+body * textarea,
+body * select {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+    -moz-text-fill-color: #000000 !important;
+}
+
+/* Override spécifique pour toutes les classes Tailwind */
+input.text-gray-500,
+input.text-gray-400,
+input.text-white,
+textarea.text-gray-500,
+textarea.text-gray-400,
+textarea.text-white,
+select.text-gray-500,
+select.text-gray-400,
+select.text-white {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+}
+
+/* Les placeholders restent gris */
+input::placeholder,
+textarea::placeholder {
+    color: #9ca3af !important;
+    -webkit-text-fill-color: #9ca3af !important;
+}
+
+/* Les options de select sont noires */
+option {
+    color: #000000 !important;
+    background: white !important;
+}
+
+/* Styles de test additionnels pour déboguer */
+.debug-text {
+    color: #111827 !important;
+    background-color: yellow;
+    padding: 0.25rem;
+}
+</style>
+{% endblock %}

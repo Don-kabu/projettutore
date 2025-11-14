@@ -1,0 +1,33 @@
+{% extends "email/base.html" %}
+
+{% block title %}Code de Vérification - Regideso{% endblock %}
+
+{% block header_title %}Code de Vérification{% endblock %}
+{% block header_subtitle %}Confirmez votre signalement avec ce code{% endblock %}
+
+{% block content %}
+    <h2>Code de vérification</h2>
+    
+    <p>Vous avez demandé un signalement de fuite d'eau. Pour confirmer votre demande et garantir l'authenticité du signalement, veuillez utiliser le code de vérification ci-dessous.</p>
+    
+    <!-- Code OTP principal -->
+    <div class="otp-container">
+        <div class="otp-label">Votre code de vérification</div>
+        <div class="otp-code">{{ otp_code }}</div>
+        <div style="color: #6b7280; font-size: 14px; margin-top: 8px;">
+            ⏰ Valide pendant 10 minutes
+        </div>
+    </div>
+
+    <!-- Bouton de retour au site -->
+    <div style="text-align: center; margin: 30px 0;">
+        {% if fuite_id %}
+            <a href="{% url 'verify_otp' fuite_id %}" class="btn">
+                🌐 Retourner au site de signalement
+            </a>
+        {% endif %}
+    </div>
+    <p style="margin-top: 30px; color: #6b7280; font-style: italic; text-align: center;">
+        Merci de contribuer à la préservation de nos ressources en eau ! 🌍💧
+    </p>
+{% endblock %}

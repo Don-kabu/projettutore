@@ -1,0 +1,120 @@
+{% extends "email/base.html" %}
+
+{% block title %}Confirmation de Signalement - Regideso{% endblock %}
+
+{% block header_title %}Signalement Confirmé ✅{% endblock %}
+{% block header_subtitle %}Votre signalement a été enregistré avec succès{% endblock %}
+
+{% block content %}
+    <h2>Bonjour {{ fuite.complaint_name|default:"Citoyen" }},</h2>
+    
+    <p>Merci d'avoir pris le temps de signaler une fuite d'eau. Votre engagement citoyen contribue à préserver cette précieuse ressource.</p>
+    
+    <div class="alert alert-success">
+        <strong>✅ Signalement enregistré</strong><br>
+        Votre signalement a été reçu et traité avec succès par nos équipes.
+    </div>
+    
+    <!-- Informations du signalement -->
+    <div class="info-card">
+        <h3>🔍 Détails de votre signalement</h3>
+        
+        <div class="info-row">
+            <span class="info-label">📋 Numéro de référence</span>
+            <span class="info-value"><strong>#{{ fuite.id|stringformat:"05d" }}</strong></span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📅 Date de signalement</span>
+            <span class="info-value">{{ fuite.date_creation|date:"d/m/Y à H:i" }}</span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📍 Localisation</span>
+            <span class="info-value">
+                {{ fuite.quartier|default:"Non spécifié" }}, 
+                {{ fuite.commune|default:"Non spécifiée" }}
+            </span>
+        </div>
+        
+        {% if fuite.adresse %}
+        <div class="info-row">
+            <span class="info-label">🏠 Adresse</span>
+            <span class="info-value">{{ fuite.adresse }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="info-row">
+            <span class="info-label">⚡ Gravité</span>
+            <span class="info-value">
+                {% if fuite.gravite == 'critique' %}
+                    <span style="color: #dc2626; font-weight: 600;">🚨 Critique</span>
+                {% elif fuite.gravite == 'moyenne' %}
+                    <span style="color: #f59e0b; font-weight: 600;">⚠️ Moyenne</span>
+                {% else %}
+                    <span style="color: #10b981; font-weight: 600;">ℹ️ Faible</span>
+                {% endif %}
+            </span>
+        </div>
+        
+        {% if fuite.description %}
+        <div class="info-row">
+            <span class="info-label">📝 Description</span>
+            <span class="info-value">{{ fuite.description|truncatewords:20 }}</span>
+        </div>
+        {% endif %}
+        
+        {% if fuite.complaint_phone %}
+        <div class="info-row">
+            <span class="info-label">📞 Contact</span>
+            <span class="info-value">{{ fuite.complaint_phone }}</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Prochaines étapes -->
+    <div class="info-card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe);">
+        <h3>🔄 Prochaines étapes</h3>
+        <p style="margin: 0; color: #1e3a8a;">
+            <strong>1. Vérification</strong> - Nos équipes vont examiner votre signalement<br>
+            <strong>2. Planification</strong> - Une mission sera planifiée si nécessaire<br>
+            <strong>3. Intervention</strong> - Nos techniciens interviendront sur le terrain<br>
+            <strong>4. Suivi</strong> - Vous serez informé de l'avancement des travaux
+        </p>
+    </div>
+    
+    <!-- Informations importantes -->
+    <div class="alert alert-info">
+        <strong>ℹ️ À savoir :</strong><br>
+        • Les signalements critiques sont traités en priorité (dans les 24h)<br>
+        • Vous recevrez un SMS de confirmation si un numéro a été fourni<br>
+        • Notre équipe vous contactera si des informations supplémentaires sont nécessaires
+    </div>
+    
+    <!-- Conseils en attendant -->
+    <h3 style="color: #1f2937; margin-top: 30px;">💡 En attendant l'intervention</h3>
+    <p>Voici quelques conseils pour limiter les dégâts :</p>
+    <ul style="color: #4b5563; line-height: 1.6;">
+        <li>🚫 <strong>Évitez la zone</strong> pour votre sécurité</li>
+        <li>📱 <strong>Signalez tout changement</strong> en nous contactant</li>
+        <li>💧 <strong>Économisez l'eau</strong> dans votre quartier</li>
+        <li>🚗 <strong>Attention circulation :</strong> risque de glissement si c'est sur la route</li>
+    </ul>
+    
+    <!-- Contact d'urgence -->
+    <div class="alert alert-warning">
+        <strong>🚨 En cas d'urgence</strong><br>
+        Si la situation s'aggrave (inondation, danger imminent), contactez immédiatement nos services d'urgence au <strong>+243 XXX XXX XXX</strong>
+    </div>
+    
+    <!-- Bouton de suivi -->
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="http://127.0.0.1:8000/suivi/{{ fuite.opt }}/" class="btn">
+            🔍 Suivre mon signalement #{{ fuite.id|stringformat:"05d" }}
+        </a>
+    </div>
+    
+    <p style="margin-top: 30px; color: #6b7280; font-style: italic;">
+        Merci pour votre engagement citoyen ! Ensemble, préservons l'eau, source de vie. 🌍💧
+    </p>
+{% endblock %}

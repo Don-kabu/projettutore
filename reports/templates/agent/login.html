@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion Agent - Regideso{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">🛠️</div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Interface Agent</h1>
+            <p class="text-gray-600">Connectez-vous pour gérer vos missions</p>
+        </div>
+
+        <!-- Formulaire de connexion -->
+        <div class="agent-form-container">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="email" class="block text-sm font-semibold mb-2">
+                        📧 Email Agent
+                    </label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="agent@regideso.cd"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="block text-sm font-semibold mb-2">
+                        🔒 Mot de passe
+                    </label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                        placeholder="commune-quartier"
+                    >
+                    <p class="text-xs text-gray-600 mt-1">
+                        💡 Format: commune-quartier (ex: Gombe-Centre)
+                    </p>
+                </div>
+
+                <button 
+                    type="submit" 
+                    class="agent-btn w-full"
+                >
+                    🚀 Se connecter
+                </button>
+            </form>
+
+            <!-- Informations -->
+            <div class="mt-8 p-4 bg-blue-50 rounded-xl">
+                <h3 class="font-semibold text-blue-800 mb-2">ℹ️ Informations de connexion</h3>
+                <div class="text-sm text-blue-700 space-y-1">
+                    <p>• Utilisez votre email professionnel Regideso</p>
+                    <p>• Mot de passe: <strong>commune-quartier</strong></p>
+                    <p>• Exemples: Gombe-Centre, Kinshasa-Kalamu</p>
+                    <p>Pour créer les agents : <a href="{% url 'init_agents' %}" class="underline font-semibold">Initialiser les agents</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats rapides -->
+        <div class="mt-8 text-center text-gray-600">
+            <p class="text-sm">🏢 Système de Gestion des Missions - Regideso</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-focus sur le champ email
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('email').focus();
+    
+    // Validation en temps réel du mot de passe
+    const passwordField = document.getElementById('password');
+    passwordField.addEventListener('input', function() {
+        const password = this.value;
+        const isValid = password.includes('-') && password.length >= 5;
+        
+        if (password.length > 0) {
+            if (isValid) {
+                this.style.borderColor = '#10b981';
+                this.style.boxShadow = '0 0 0 2px rgba(16, 185, 129, 0.2)';
+            } else {
+                this.style.borderColor = '#f59e0b';
+                this.style.boxShadow = '0 0 0 2px rgba(245, 158, 11, 0.2)';
+            }
+        } else {
+            this.style.borderColor = '#d1d5db';
+            this.style.boxShadow = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}

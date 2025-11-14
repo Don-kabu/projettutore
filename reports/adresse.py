@@ -450,7 +450,7 @@ adresse = {
     },
     "Lemba" : {
         "Salongo"  : {
-            'email':"kabudon19@gmail.com",
+            'email':"benitobapela@gmail.com",
             'phone':"0892649177"
         },
         "Kemi"  : {

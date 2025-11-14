@@ -1,0 +1,161 @@
+{% extends "email/base.html" %}
+
+{% block title %}Bienvenue - Regideso{% endblock %}
+
+{% block header_title %}Bienvenue ! 🎉{% endblock %}
+{% block header_subtitle %}Merci de rejoindre notre communauté citoyenne{% endblock %}
+
+{% block content %}
+    <h2>Bienvenue dans la famille Regideso !</h2>
+    
+    <p>Nous sommes ravis de vous accueillir dans notre plateforme de signalement de fuites d'eau. Votre engagement citoyen est essentiel pour la préservation de nos ressources hydriques.</p>
+    
+    <div class="alert alert-success">
+        <strong>🎯 Mission accomplie !</strong><br>
+        Votre compte est maintenant actif et vous pouvez commencer à signaler des fuites dans votre quartier.
+    </div>
+    
+    <!-- Guide de démarrage rapide -->
+    <div class="info-card">
+        <h3>🚀 Guide de démarrage rapide</h3>
+        
+        <div style="color: #4b5563; line-height: 1.6;">
+            <p><strong>1️⃣ Découvrez une fuite ?</strong><br>
+            Rendez-vous sur notre plateforme et cliquez sur "Signaler une fuite"</p>
+            
+            <p><strong>2️⃣ Remplissez le formulaire</strong><br>
+            Indiquez l'emplacement, la gravité et ajoutez une photo si possible</p>
+            
+            <p><strong>3️⃣ Validation</strong><br>
+            Confirmez votre signalement avec le code que nous vous envoyons</p>
+            
+            <p><strong>4️⃣ Suivi</strong><br>
+            Recevez des mises à jour par email jusqu'à la résolution</p>
+        </div>
+    </div>
+    
+    <!-- Fonctionnalités principales -->
+    <h3 style="color: #1f2937; margin-top: 30px;">✨ Ce que vous pouvez faire</h3>
+    
+    <div style="display: grid; gap: 16px; margin: 20px 0;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="color: #1f2937; margin: 0 0 8px 0; font-size: 16px;">🚰 Signaler des fuites</h4>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                Signalez rapidement toute fuite d'eau dans votre quartier avec géolocalisation automatique
+            </p>
+        </div>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="color: #1f2937; margin: 0 0 8px 0; font-size: 16px;">📱 Suivi en temps réel</h4>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                Suivez l'avancement du traitement de vos signalements en temps réel
+            </p>
+        </div>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="color: #1f2937; margin: 0 0 8px 0; font-size: 16px;">📧 Notifications automatiques</h4>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                Recevez des mises à jour par email à chaque étape du processus
+            </p>
+        </div>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+            <h4 style="color: #1f2937; margin: 0 0 8px 0; font-size: 16px;">🏆 Impact citoyen</h4>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                Contribuez activement à la conservation de l'eau dans votre communauté
+            </p>
+        </div>
+    </div>
+    
+    <!-- Conseils pour bien commencer -->
+    <div class="info-card" style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe);">
+        <h3>💡 Conseils pour bien commencer</h3>
+        
+        <ul style="color: #1e3a8a; line-height: 1.6; margin: 16px 0 0 20px;">
+            <li><strong>📸 Prenez des photos :</strong> Une image vaut mille mots pour nos équipes</li>
+            <li><strong>📍 Soyez précis :</strong> Plus l'adresse est précise, plus l'intervention sera rapide</li>
+            <li><strong>⚡ Évaluez la gravité :</strong> Cela nous aide à prioriser les interventions</li>
+            <li><strong>📞 Laissez vos coordonnées :</strong> Pour que nous puissions vous contacter si besoin</li>
+            <li><strong>🔄 Suivez vos signalements :</strong> Vous recevrez des mises à jour régulières</li>
+        </ul>
+    </div>
+    
+    <!-- Statistiques et impact -->
+    <h3 style="color: #1f2937; margin-top: 30px;">📊 Notre impact ensemble</h3>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin: 20px 0;">
+        <div style="text-align: center; background: #f0fdf4; border: 1px solid #d1fae5; border-radius: 8px; padding: 20px;">
+            <div style="font-size: 32px; font-weight: 700; color: #059669;">2,847</div>
+            <div style="color: #065f46; font-size: 14px; font-weight: 600;">Fuites résolues</div>
+        </div>
+        
+        <div style="text-align: center; background: #f0f9ff; border: 1px solid #dbeafe; border-radius: 8px; padding: 20px;">
+            <div style="font-size: 32px; font-weight: 700; color: #2563eb;">1,205</div>
+            <div style="color: #1e40af; font-size: 14px; font-weight: 600;">Citoyens actifs</div>
+        </div>
+        
+        <div style="text-align: center; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 20px;">
+            <div style="font-size: 32px; font-weight: 700; color: #d97706;">145k</div>
+            <div style="color: #92400e; font-size: 14px; font-weight: 600;">Litres économisés</div>
+        </div>
+    </div>
+    
+    <!-- Contact et support -->
+    <div class="alert alert-info">
+        <strong>❓ Besoin d'aide ?</strong><br>
+        Notre équipe support est là pour vous accompagner. N'hésitez pas à nous contacter au <strong>+243 XXX XXX XXX</strong> ou par email à <strong>support@regideso.cd</strong>
+    </div>
+    
+    <!-- Bouton d'action principal -->
+    <div style="text-align: center; margin: 30px 0;">
+        <a href="#" class="btn">
+            🚰 Faire mon premier signalement
+        </a>
+        <br><br>
+        <a href="#" class="btn btn-secondary">
+            📖 Consulter le guide complet
+        </a>
+    </div>
+    
+    <!-- Message de motivation -->
+    <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #d1fae5; border-radius: 12px; padding: 24px; margin: 30px 0; text-align: center;">
+        <h4 style="color: #065f46; margin: 0 0 12px 0;">💚 Ensemble, préservons l'eau</h4>
+        <p style="color: #059669; margin: 0; font-style: italic;">
+            "Chaque goutte compte, chaque signalement fait la différence. Merci de faire partie de la solution !"
+        </p>
+        <div style="margin-top: 16px; font-size: 24px;">🌍💧✨</div>
+    </div>
+    
+    <!-- Ressources utiles -->
+    <h3 style="color: #1f2937; margin-top: 30px;">📚 Ressources utiles</h3>
+    
+    <div style="display: grid; gap: 12px; margin: 20px 0;">
+        <a href="#" style="display: flex; align-items: center; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #1f2937;">
+            <span style="margin-right: 12px; font-size: 20px;">📋</span>
+            <div>
+                <strong>Guide utilisateur complet</strong><br>
+                <small style="color: #6b7280;">Tout ce qu'il faut savoir pour bien utiliser la plateforme</small>
+            </div>
+        </a>
+        
+        <a href="#" style="display: flex; align-items: center; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #1f2937;">
+            <span style="margin-right: 12px; font-size: 20px;">❓</span>
+            <div>
+                <strong>Questions fréquentes</strong><br>
+                <small style="color: #6b7280;">Réponses aux questions les plus courantes</small>
+            </div>
+        </a>
+        
+        <a href="#" style="display: flex; align-items: center; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #1f2937;">
+            <span style="margin-right: 12px; font-size: 20px;">💡</span>
+            <div>
+                <strong>Conseils d'économie d'eau</strong><br>
+                <small style="color: #6b7280;">Astuces pour réduire votre consommation au quotidien</small>
+            </div>
+        </a>
+    </div>
+    
+    <p style="margin-top: 30px; color: #6b7280; font-style: italic; text-align: center;">
+        Bienvenue dans l'aventure ! Ensemble, nous construisons un avenir où chaque goutte d'eau compte. 🚰🌟
+    </p>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Test Interface Agent - Regideso{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">🧪 Test Interface Agent</h1>
+                <p class="text-gray-600">Vérification des données d'agents et test de connexion</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <a href="{% url 'clean_agents' %}" 
+                   class="bg-red-100 hover:bg-red-200 text-red-800 p-4 rounded-lg text-center transition-colors">
+                    🗑️ Nettoyer les agents
+                </a>
+                <a href="{% url 'init_agents' %}" 
+                   class="bg-green-100 hover:bg-green-200 text-green-800 p-4 rounded-lg text-center transition-colors">
+                    ⚡ Initialiser les agents
+                </a>
+                <a href="{% url 'agent_login' %}" 
+                   class="bg-blue-100 hover:bg-blue-200 text-blue-800 p-4 rounded-lg text-center transition-colors">
+                    🚀 Connexion Agent
+                </a>
+            </div>
+
+            <!-- Exemples de connexion -->
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">🔑 Exemples de connexion</h2>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-blue-800 mb-2">Exemple Gombe :</h3>
+                        <p class="text-blue-700"><strong>Email:</strong> Adresse email configurée pour Gombe</p>
+                        <p class="text-blue-700"><strong>Mot de passe:</strong> Gombe-Centre (ou autre quartier)</p>
+                    </div>
+                    
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h3 class="font-semibold text-green-800 mb-2">Exemple Kinshasa :</h3>
+                        <p class="text-green-700"><strong>Email:</strong> Adresse email configurée pour Kinshasa</p>
+                        <p class="text-green-700"><strong>Mot de passe:</strong> Kinshasa-Kalamu (ou autre quartier)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Données d'adresse disponibles -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Données disponibles</h2>
+                <div class="space-y-2">
+                    {% load static %}
+                    <p class="text-gray-700">
+                        Les agents sont créés automatiquement à partir du fichier <code>adresse.py</code> qui contient 
+                        les communes et quartiers avec leurs informations de contact.
+                    </p>
+                    
+                    <div class="bg-yellow-50 rounded-lg p-4 mt-4">
+                        <h3 class="font-semibold text-yellow-800 mb-2">⚠️ Important :</h3>
+                        <ul class="text-yellow-700 space-y-1">
+                            <li>• Chaque commune a un email et téléphone de contact</li>
+                            <li>• Le mot de passe est au format: <strong>Commune-Quartier</strong></li>
+                            <li>• Les agents sont responsables de tous les quartiers de leur commune</li>
+                            <li>• Utilisez "Nettoyer" puis "Initialiser" si vous avez des doublons</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="mt-8 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-blue-800 mb-4">📋 Instructions de test</h3>
+                <ol class="text-blue-700 space-y-2">
+                    <li><strong>1.</strong> Cliquez sur "Nettoyer les agents" pour supprimer les doublons</li>
+                    <li><strong>2.</strong> Cliquez sur "Initialiser les agents" pour créer les agents depuis adresse.py</li>
+                    <li><strong>3.</strong> Notez un email et une commune/quartier disponible</li>
+                    <li><strong>4.</strong> Allez sur "Connexion Agent" et testez avec ces données</li>
+                    <li><strong>5.</strong> Format du mot de passe: Commune-Quartier (ex: Gombe-Centre)</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

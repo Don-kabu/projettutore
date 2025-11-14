@@ -1,0 +1,56 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<section class="relative min-h-screen bg-gradient-to-b from-blue-500 via-blue to-blue-100 flex items-center border-t border-blue-400 rounded-t-xl">
+  <div class="container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center justify-between gap-12">
+    <div class="flex-1 space-y-6">
+      <h1 class="text-5xl lg:text-6xl font-extrabold leading-tight text-gray-900 animate-fadeIn">Signalez. <span class="text-blue-600">Réparez.</span><br> Protégeons <span class="text-emerald-600">l’eau</span>.</h1>
+      <p class="text-lg lg:text-xl max-w-lg animate-fadeIn">Notre plateforme permet de <strong>déclarer rapidement</strong> une fuite d’eau et de suivre son traitement.Ensemble, construisons une gestion durable de l’eau 💧.</p>
+      <div class="flex gap-6 animate-fadeInUp">
+        <a href="/signaler" 
+           class="px-8 py-4 rounded-xl text-white font-semibold shadow-lg bg-gradient-to-r from-blue-600 to-blue-500 hover:scale-105 transition transform">Signaler une fuite</a>
+        <a href="#" 
+           class="px-8 py-4 rounded-xl border-2 border-blue-400 bg-blue-200 text-gray-800 font-semibold hover:bg-gray-100 transition">Voir mes rapports</a>
+      </div>
+    </div>
+     <div class="flex-1 relative animate-bounce-slow">
+            <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png"alt="App mockup" class="mx-auto w-64 drop-shadow-2xl">
+     </div>
+  </div>
+</section>
+<section class="py-24 bg-white">
+  <div class="container mx-auto px-6 lg:px-20 text-center">
+    <h2 class="text-3xl font-bold text-gray-900 mb-12">Pourquoi utiliser <span class="text-blue-600">Signalement Fuites</span> ?</h2>
+    <div class="grid md:grid-cols-3 gap-12">
+
+      <div class="p-6 bg-gray-200 rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1">
+        <div class="text-blue-600 text-4xl mb-4">⚡</div>
+        <h3 class="text-xl font-semibold mb-2">Rapide</h3>
+        <p class="text-gray-600">En 3 clics, vous déclarez une fuite et nous recevons l’alerte instantanément.</p>
+      </div>
+
+      <div class="p-6 bg-gray-200 rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1">
+        <div class="text-emerald-600 text-4xl mb-4">🌍</div>
+        <h3 class="text-xl font-semibold mb-2">Communautaire</h3>
+        <p class="text-gray-600">Chaque signalement contribue à préserver l’eau pour votre quartier.</p>
+      </div>
+
+      <div class="p-6 bg-gray-200 rounded-2xl shadow-sm hover:shadow-md transition transform hover:-translate-y-1">
+        <div class="text-indigo-600 text-4xl mb-4">🔒</div>
+        <h3 class="text-xl font-semibold mb-2">Fiable</h3>
+        <p class="text-gray-600">Vos données sont protégées et vos rapports accessibles en toute sécurité.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="py-24 bg-gradient-to-r from-blue-400 to-gray-400 text-white text-center border-b border-blue-400 rounded-b-lg">
+  <h2 class="text-3xl font-bold mb-6">Prêt à agir pour l’eau ?</h2>
+  <a href="/signaler" class="px-10 py-5 bg-white text-blue-700 rounded-xl font-bold shadow-lg hover:scale-110 transition transform">🚰 Signaler maintenant</a>
+</section>
+{% endblock %}

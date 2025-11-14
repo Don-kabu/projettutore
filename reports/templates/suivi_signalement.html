@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}Suivi signalement #{{ fuite.id|stringformat:"05d" }} - Regideso{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- Header avec statut -->
+        <div class="text-center mb-8">
+            <div class="text-6xl mb-4">{{ status_icon }}</div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Signalement #{{ fuite.id|stringformat:"05d" }}
+            </h1>
+            <div class="inline-flex items-center px-6 py-3 rounded-full text-lg font-semibold
+                {% if status_color == 'success' %}bg-green-100 text-green-800
+                {% elif status_color == 'info' %}bg-blue-100 text-blue-800
+                {% elif status_color == 'warning' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ status_icon }} {{ status_label }}
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-50 border-green-400 text-green-700{% else %}bg-blue-50 border-blue-400 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Progression visuelle -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">📈 Progression du traitement</h2>
+            
+            <div class="relative">
+                <!-- Barre de progression -->
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex-1 h-2 bg-gray-200 rounded-full relative overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000 ease-out
+                            {% if status == 'pending' %}w-1/4
+                            {% elif status == 'verified' %}w-1/2
+                            {% elif status == 'in_progress' %}w-3/4
+                            {% elif status == 'resolved' %}w-full{% endif %}"
+                        ></div>
+                    </div>
+                </div>
+                
+                <!-- Étapes -->
+                <div class="grid grid-cols-4 gap-4">
+                    <!-- Étape 1: Signalé -->
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl
+                            bg-green-100 border-2 border-green-500 text-green-600">
+                            ✅
+                        </div>
+                        <div class="font-semibold text-green-800">Signalé</div>
+                        <div class="text-sm text-gray-500">{{ fuite.date_creation|date:"d/m/Y" }}</div>
+                    </div>
+                    
+                    <!-- Étape 2: Vérifié -->
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl
+                            {% if status == 'verified' or status == 'in_progress' or status == 'resolved' %}
+                                bg-green-100 border-2 border-green-500 text-green-600
+                            {% else %}
+                                bg-gray-100 border-2 border-gray-300 text-gray-400
+                            {% endif %}">
+                            {% if status == 'verified' or status == 'in_progress' or status == 'resolved' %}✅{% else %}⏳{% endif %}
+                        </div>
+                        <div class="font-semibold {% if status == 'verified' or status == 'in_progress' or status == 'resolved' %}text-green-800{% else %}text-gray-500{% endif %}">
+                            Vérifié
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {% if fuite.verified_opt %}{{ fuite.verified_opt|date:"d/m/Y" }}{% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 3: En cours -->
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl
+                            {% if status == 'in_progress' or status == 'resolved' %}
+                                bg-blue-100 border-2 border-blue-500 text-blue-600
+                            {% else %}
+                                bg-gray-100 border-2 border-gray-300 text-gray-400
+                            {% endif %}">
+                            {% if status == 'in_progress' %}🔄{% elif status == 'resolved' %}✅{% else %}⏸️{% endif %}
+                        </div>
+                        <div class="font-semibold {% if status == 'in_progress' or status == 'resolved' %}text-blue-800{% else %}text-gray-500{% endif %}">
+                            En cours
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {% if mission %}{{ mission.date_creation|date:"d/m/Y" }}{% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Étape 4: Résolu -->
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-2xl
+                            {% if status == 'resolved' %}
+                                bg-green-100 border-2 border-green-500 text-green-600
+                            {% else %}
+                                bg-gray-100 border-2 border-gray-300 text-gray-400
+                            {% endif %}">
+                            {% if status == 'resolved' %}🎉{% else %}⏳{% endif %}
+                        </div>
+                        <div class="font-semibold {% if status == 'resolved' %}text-green-800{% else %}text-gray-500{% endif %}">
+                            Résolu
+                        </div>
+                        <div class="text-sm text-gray-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Détails du signalement -->
+        <div class="grid lg:grid-cols-2 gap-8">
+            <!-- Informations générales -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                    📋 Détails du signalement
+                </h3>
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">📅 Date signalement</span>
+                        <span class="text-gray-900">{{ fuite.date_creation|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">👤 Signalé par</span>
+                        <span class="text-gray-900">{{ fuite.complaint_name|default:"Citoyen" }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">📍 Quartier</span>
+                        <span class="text-gray-900">{{ fuite.quartier|default:"Non spécifié" }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">🏢 Commune</span>
+                        <span class="text-gray-900">{{ fuite.commune|default:"Non spécifiée" }}</span>
+                    </div>
+                    
+                    {% if fuite.adresse %}
+                    <div class="flex justify-between items-start py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">🏠 Adresse</span>
+                        <span class="text-gray-900 text-right max-w-xs">{{ fuite.adresse }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                        <span class="font-medium text-gray-700">⚡ Gravité</span>
+                        <span class="text-gray-900">
+                            {% if fuite.gravite == 'critique' %}
+                                <span class="text-red-600 font-semibold">🚨 Critique</span>
+                            {% elif fuite.gravite == 'moyenne' %}
+                                <span class="text-yellow-600 font-semibold">⚠️ Moyenne</span>
+                            {% else %}
+                                <span class="text-green-600 font-semibold">ℹ️ Faible</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if fuite.description %}
+                    <div class="py-3">
+                        <span class="font-medium text-gray-700 block mb-2">📝 Description</span>
+                        <p class="text-gray-900 bg-gray-50 rounded-lg p-3">{{ fuite.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mission et feedback -->
+            <div class="space-y-6">
+                <!-- Feedback selon l'état -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        💬 État actuel
+                    </h3>
+                    
+                    {% if status == 'pending' %}
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <div class="text-2xl mr-3">⏳</div>
+                                <div>
+                                    <h4 class="font-semibold text-yellow-800 mb-2">En attente de vérification</h4>
+                                    <p class="text-yellow-700 text-sm">
+                                        Votre signalement a été reçu et est en cours de vérification par nos équipes. 
+                                        Nous examinerons les détails dans les plus brefs délais.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    {% elif status == 'verified' %}
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <div class="text-2xl mr-3">✅</div>
+                                <div>
+                                    <h4 class="font-semibold text-blue-800 mb-2">Signalement vérifié</h4>
+                                    <p class="text-blue-700 text-sm">
+                                        Votre signalement a été vérifié et validé. Une mission d'intervention 
+                                        va être programmée prochainement par nos équipes techniques.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    {% elif status == 'in_progress' %}
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <div class="text-2xl mr-3">🔄</div>
+                                <div>
+                                    <h4 class="font-semibold text-blue-800 mb-2">Intervention en cours</h4>
+                                    <p class="text-blue-700 text-sm">
+                                        Nos techniciens sont actuellement sur le terrain et travaillent 
+                                        activement à la résolution de votre signalement.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    {% elif status == 'resolved' %}
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <div class="text-2xl mr-3">🎉</div>
+                                <div>
+                                    <h4 class="font-semibold text-green-800 mb-2">Problème résolu</h4>
+                                    <p class="text-green-700 text-sm">
+                                        Excellente nouvelle ! Le problème de fuite d'eau a été résolu avec succès. 
+                                        Merci pour votre signalement citoyen !
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Mission si disponible -->
+                {% if mission %}
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        🛠️ Mission d'intervention
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="font-medium text-gray-700">🆔 Numéro mission</span>
+                            <span class="text-gray-900 font-mono">#{{ mission.id|stringformat:"05d" }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="font-medium text-gray-700">📅 Planifiée le</span>
+                            <span class="text-gray-900">{{ mission.date_creation|date:"d/m/Y" }}</span>
+                        </div>
+                        
+                        {% if mission.date_prevue %}
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="font-medium text-gray-700">⏰ Intervention prévue</span>
+                            <span class="text-gray-900 font-semibold">{{ mission.date_prevue|date:"d/m/Y" }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if mission.resolver_phone %}
+                        <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                            <span class="font-medium text-gray-700">📞 Contact équipe</span>
+                            <span class="text-gray-900">{{ mission.resolver_phone }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        {% if mission.description %}
+                        <div class="py-2">
+                            <span class="font-medium text-gray-700 block mb-2">📝 Description mission</span>
+                            <p class="text-gray-900 bg-gray-50 rounded-lg p-3 text-sm">{{ mission.description|truncatewords:30 }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Bouton de rappel -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        📱 Besoin d'aide ?
+                    </h3>
+                    
+                    <p class="text-gray-600 mb-6">
+                        {% if status == 'pending' %}
+                            Pas reçu de retour ? Faites un rappel pour relancer la vérification.
+                        {% elif status == 'verified' %}
+                            Mission pas encore planifiée ? Faites un rappel pour accélérer le processus.
+                        {% elif status == 'in_progress' %}
+                            Intervention trop longue ? Contactez l'équipe pour un point d'avancement.
+                        {% else %}
+                            Problème toujours présent ? Contactez notre support.
+                        {% endif %}
+                    </p>
+                    
+                    <form method="post" class="space-y-4" id="rappelForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="rappel">
+                        
+                        <button 
+                            type="submit" 
+                            class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-4 focus:ring-orange-500/50 transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+                            id="rappelBtn"
+                        >
+                            📢 Faire un rappel
+                        </button>
+                    </form>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <p class="text-sm text-gray-500">
+                            💡 <strong>Conseil :</strong> En cas d'urgence, contactez directement notre service au 
+                            <strong>+243 XXX XXX XXX</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Retour -->
+        <div class="mt-8 text-center">
+            <a href="{% url 'recherche_signalement' %}" class="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium">
+                ← Rechercher un autre signalement
+            </a>
+            <span class="mx-4 text-gray-400">|</span>
+            <a href="{% url 'accueil' %}" class="inline-flex items-center text-gray-600 hover:text-gray-800 font-medium">
+                🏠 Retour à l'accueil
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Gestion du bouton de rappel avec feedback
+document.getElementById('rappelForm').addEventListener('submit', function(e) {
+    const btn = document.getElementById('rappelBtn');
+    
+    // Désactiver le bouton et changer le texte
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Envoi en cours...';
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    
+    // Réactiver après 3 secondes (en cas d'échec)
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '📢 Faire un rappel';
+        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }, 3000);
+});
+
+// Animation d'entrée pour les cartes
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.bg-white');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+});
+</script>
+{% endblock %}

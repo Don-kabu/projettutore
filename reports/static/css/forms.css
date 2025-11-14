@@ -1,0 +1,603 @@
+/* Styles spéciaux pour les formulaires Django générés automatiquement */
+
+/* Force ABSOLUMENT la couleur noire pour les valeurs saisies */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+textarea,
+select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Override spécifique pour Tailwind CSS */
+.form-input,
+.form-textarea,
+.form-select,
+input.form-input,
+textarea.form-textarea,
+select.form-select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Override pour tous les conteneurs possibles */
+.form-container input,
+.form-container textarea,
+.form-container select,
+.bg-white input,
+.bg-white textarea,
+.bg-white select,
+.agent-form-container input,
+.agent-form-container textarea,
+.agent-form-container select {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Styles spécifiques selon les classes Tailwind */
+input.text-white,
+input.text-gray-500,
+input.text-gray-400 {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Styles pour les placeholders - DOIVENT rester gris */
+input::placeholder,
+textarea::placeholder {
+  color: #6b7280 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Styles pour les champs en focus - DOIVENT rester noirs */
+input:focus,
+textarea:focus,
+select:focus {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Styles pour les options de select */
+select option {
+  color: #000000 !important;
+  background-color: white !important;
+}
+
+/* Classes personnalisées pour les formulaires de signalement */
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1f2937 !important; /* Force le noir pour les labels */
+  font-size: 0.95rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: white !important;
+  color: #111827 !important; /* Force le texte en noir */
+  font-family: inherit;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #6b7280 !important; /* Placeholder gris moyen */
+  opacity: 1;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+  color: #111827 !important; /* Texte toujours noir en focus */
+}
+
+.form-select option {
+  color: #111827 !important; /* Options en noir */
+  background-color: white;
+  padding: 0.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Override des styles Django par défaut */
+.form-container p {
+  margin-bottom: 1.5rem;
+}
+
+.form-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #1f2937; /* Gris très foncé pour meilleur contraste */
+  font-size: 0.95rem;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="tel"],
+.form-container input[type="password"],
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: white;
+  font-family: inherit;
+  color: #111827; /* Noir pour le texte saisi */
+}
+
+/* Placeholder styling pour meilleur contraste */
+.form-container input::placeholder,
+.form-container textarea::placeholder {
+  color: #6b7280; /* Gris moyen pour placeholder */
+  opacity: 1;
+}
+
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+  color: #111827; /* Assurer que le texte reste noir même en focus */
+}
+
+/* Style pour les options de select */
+.form-container select option {
+  color: #111827; /* Texte noir pour les options */
+  background-color: white;
+  padding: 0.5rem;
+}
+
+/* Style pour les checkboxes et radio buttons */
+.form-container input[type="checkbox"],
+.form-container input[type="radio"] {
+  width: auto;
+  margin-right: 0.5rem;
+  transform: scale(1.2);
+  accent-color: var(--primary-blue);
+}
+
+/* Messages d'erreur Django */
+.form-container .errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.form-container .errorlist li {
+  color: #dc2626; /* Rouge plus foncé pour meilleur contraste */
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  font-weight: 600; /* Plus gras pour la visibilité */
+  background-color: #fef2f2; /* Fond rouge très léger */
+  border-left: 3px solid #dc2626;
+  padding-left: 0.75rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.form-container .error input,
+.form-container .error select,
+.form-container .error textarea {
+  border-color: #dc2626; /* Rouge plus foncé */
+  background-color: rgba(239, 68, 68, 0.05);
+  color: #111827; /* Texte toujours noir même en erreur */
+}
+
+/* Help text */
+.form-container .helptext {
+  font-size: 0.875rem;
+  color: #374151; /* Gris plus foncé pour meilleur contraste */
+  margin-top: 0.25rem;
+  font-style: italic;
+  background-color: #f9fafb;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border-left: 3px solid #6b7280;
+}
+
+/* Required field indicator */
+.form-container .required {
+  color: #dc2626; /* Rouge plus foncé */
+  margin-left: 0.25rem;
+  font-weight: bold;
+}
+
+/* Amélioration des labels requis */
+.form-container .required-field::after {
+  content: " *";
+  color: #dc2626;
+  font-weight: bold;
+}
+
+/* File input styling */
+.form-container input[type="file"] {
+  padding: 0.5rem;
+  border: 2px dashed var(--gray-300);
+  background-color: var(--gray-50);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-container input[type="file"]:hover {
+  border-color: var(--primary-blue);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Multiple select styling */
+.form-container select[multiple] {
+  height: auto;
+  min-height: 120px;
+}
+
+/* Fieldset styling */
+.form-container fieldset {
+  border: 2px solid #d1d5db; /* Bordure plus visible */
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #fefefe; /* Fond très légèrement gris */
+}
+
+.form-container legend {
+  font-weight: 700; /* Plus gras */
+  padding: 0 0.5rem;
+  color: #1f2937; /* Noir pour le legend */
+  font-size: 1.1rem; /* Légèrement plus grand */
+  background-color: white; /* Fond blanc pour se détacher */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-container input,
+  .form-container select,
+  .form-container textarea {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  .form-container label {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation pour les champs invalides */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.form-container .error input:focus {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Loading state pour les boutons */
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+}
+
+.btn-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Styles pour les formulaires en plusieurs étapes */
+.step-form {
+  display: none;
+}
+
+.step-form.active {
+  display: block;
+  animation: fadeInRight 0.5s ease-out;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Amélioration de l'accessibilité */
+.form-container input:focus,
+.form-container select:focus,
+.form-container textarea:focus,
+.form-container button:focus {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Dark mode support (optionnel) */
+@media (prefers-color-scheme: dark) {
+  .form-container {
+    background: rgba(31, 41, 55, 0.95);
+    color: white;
+  }
+  
+  .form-container label {
+    color: #e5e7eb;
+  }
+  
+  .form-container input,
+  .form-container select,
+  .form-container textarea {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: white;
+  }
+  
+  .form-container input::placeholder,
+  .form-container textarea::placeholder {
+    color: #9ca3af;
+  }
+}
+
+/* Styles pour le champ adresse avec bouton géolocalisation */
+.address-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.address-input-wrapper input {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.use-location-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem 1rem;
+  background: linear-gradient(135deg, var(--primary-blue), #1d4ed8);
+  color: white;
+  border: 2px solid var(--primary-blue);
+  border-left: none;
+  border-top-right-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.use-location-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.use-location-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.use-location-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.use-location-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Status de géolocalisation */
+#locationStatus {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+#locationStatus .text-blue-600 {
+  color: #2563eb; /* Bleu plus foncé */
+}
+
+#locationStatus .text-green-600 {
+  color: #059669; /* Vert plus foncé */
+}
+
+#locationStatus .text-yellow-600 {
+  color: #d97706; /* Orange plus foncé */
+}
+
+#locationStatus .text-red-600 {
+  color: #dc2626; /* Rouge plus foncé */
+}
+
+/* Styles spéciaux pour formulaires d'agent */
+.agent-form-container {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.agent-form-container h2,
+.agent-form-container h3 {
+  color: #1f2937; /* Noir pour les titres */
+  margin-bottom: 1rem;
+}
+
+.agent-form-container .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.agent-form-container label {
+  color: #1f2937; /* Noir pour les labels */
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.agent-form-container input,
+.agent-form-container select,
+.agent-form-container textarea {
+  color: #111827 !important; /* Force le texte en noir */
+  background-color: white !important;
+  border: 2px solid #d1d5db;
+}
+
+.agent-form-container input:focus,
+.agent-form-container select:focus,
+.agent-form-container textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  color: #111827 !important;
+}
+
+/* Boutons d'agent */
+.agent-btn {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white !important;
+  font-weight: 600;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.agent-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  color: white !important;
+}
+
+.agent-btn:active {
+  transform: translateY(0);
+}
+
+/* Messages d'alerte pour agents */
+.agent-alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.agent-alert.success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.agent-alert.error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.agent-alert.warning {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fed7aa;
+}
+
+.agent-alert.info {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+/* Animation de rotation pour le spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive pour le bouton géolocalisation */
+@media (max-width: 640px) {
+  .address-input-wrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .address-input-wrapper input {
+    border-radius: var(--border-radius);
+    border: 2px solid var(--gray-200);
+  }
+  
+  .use-location-btn {
+    width: 100%;
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius);
+    justify-content: center;
+  }
+}
+
+/* Amélioration de l'accessibilité pour le bouton */
+.use-location-btn:focus {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Style pour les messages de statut avec icônes */
+#locationStatus span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}

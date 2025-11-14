@@ -1,0 +1,129 @@
+{% extends "email/base.html" %}
+
+{% block title %}Nouvelle Mission - Regideso{% endblock %}
+
+{% block header_title %}Nouvelle Mission 🔧{% endblock %}
+{% block header_subtitle %}Une intervention a été programmée pour votre signalement{% endblock %}
+
+{% block content %}
+    <h2>Bonjour {{ fuite.complaint_name|default:"Citoyen" }},</h2>
+    
+    <p>Bonne nouvelle ! Nous avons programmé une mission d'intervention pour traiter la fuite d'eau que vous avez signalée.</p>
+    
+    <div class="alert alert-success">
+        <strong>Mission planifiée</strong><br>
+        Nos techniciens vont intervenir prochainement sur le site de la fuite.
+    </div>
+    
+    <!-- Informations de la mission -->
+    <div class="info-card">
+        <h3>🛠️ Détails de la mission</h3>
+        
+        <div class="info-row">
+            <span class="info-label">🆔 Numéro mission</span>
+            <span class="info-value"><strong>#{{ mission.id|stringformat:"05d" }}</strong></span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📋 Signalement associé</span>
+            <span class="info-value"><strong>#{{ fuite.id|stringformat:"05d" }}</strong></span>
+        </div>
+        
+        <div class="info-row">
+            <span class="info-label">📅 Date de planification</span>
+            <span class="info-value">{{ mission.date_creation|date:"d/m/Y à H:i" }}</span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">photo</span>
+            <span class="info-value">{{ mission.photo }}</span>
+        </div>
+        
+        {% if mission.date_prevue %}
+        <div class="info-row">
+            <span class="info-label">⏰ Date d'intervention prévue</span>
+            <span class="info-value"><strong>{{ mission.date_prevue|date:"d/m/Y" }}</strong></span>
+        </div>
+        {% endif %}
+        
+        <div class="info-row">
+            <span class="info-label">📍 Lieu d'intervention</span>
+            <span class="info-value">
+                {{ fuite.quartier|default:"Non spécifié" }}, 
+                {{ fuite.commune|default:"Non spécifiée" }}
+            </span>
+        </div>
+        
+        {% if fuite.adresse %}
+        <div class="info-row">
+            <span class="info-label">🏠 Adresse exacte</span>
+            <span class="info-value">{{ fuite.adresse }}</span>
+        </div>
+        {% endif %}
+        
+        <div class="info-row">
+            <span class="info-label">⚠️ Type d'intervention</span>
+            <span class="info-value">
+                {% if fuite.gravite == 'critique' %}
+                    <span style="color: #dc2626; font-weight: 600;">🚨 Intervention urgente</span>
+                {% elif fuite.gravite == 'moyenne' %}
+                    <span style="color: #f59e0b; font-weight: 600;">⚡ Intervention prioritaire</span>
+                {% else %}
+                    <span style="color: #10b981; font-weight: 600;">🔧 Intervention programmée</span>
+                {% endif %}
+            </span>
+        </div>
+        
+        {% if mission.description %}
+        <div class="info-row">
+            <span class="info-label">📝 Détails mission</span>
+            <span class="info-value">{{ mission.description|truncatewords:25 }}</span>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Informations de contact équipe -->
+    {% if mission.resolver_phone or mission.resolver_email %}
+    <div class="info-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+        <h3>Équipe d'intervention</h3>
+        
+        {% if mission.resolver_phone %}
+        <div class="info-row">
+            <span class="info-label">📞 Contact équipe</span>
+            <span class="info-value"><strong>{{ mission.resolver_phone }}</strong></span>
+        </div>
+        {% endif %}
+        
+        {% if mission.resolver_email %}
+        <div class="info-row">
+            <span class="info-label">Email équipe</span>
+            <span class="info-value">{{ mission.resolver_email }}</span>
+        </div>
+        {% endif %}
+        
+        <p style="margin-top: 16px; margin-bottom: 0; color: #065f46; font-size: 14px;">
+            💡 <strong>Conseil :</strong> L'équipe vous contactera directement si besoin d'informations complémentaires.
+        </p>
+    </div>
+    {% endif %}
+
+
+    <!-- Que faire en cas de problème -->
+    <div class="alert alert-warning">
+        <strong>Problème le jour J ?</strong><br>
+        Si l'équipe ne se présente pas à la date prévue ou en cas d'urgence, contactez-nous immédiatement au <strong>+243 XXX XXX XXX</strong>
+    </div>
+    
+    <!-- Boutons d'action -->
+    <div style="text-align: center; margin: 30px 0;">
+        {% if mission.resolver_phone %}
+        <a href="tel:{{ mission.resolver_phone }}" class="btn">
+            📱 Contacter l'équipe d'intervention
+        </a>
+        <br><br>
+        {% endif %}
+        <a href="http://127.0.0.1:8000/suivi/{{ fuite.opt }}/" class="btn btn-secondary">
+            🔍 Suivre l'avancement de la mission
+        </a>
+    </div>
+{% endblock %}

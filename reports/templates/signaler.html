@@ -1,37 +1,489 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Signaler une fuite{% endblock %}
 {% block content %}
-<section class="container mx-auto px-6 lg:px-20 py-16">
-  {% for message in messages%}
-    {{message}}
-  {% endfor %}
-  <h1 class="text-4xl font-bold text-gray-900 mb-10 text-center">Signaler une Fuite</h1>
-  <form method="POST" enctype="multipart/form-data" class="max-w-2xl mx-auto bg-white shadow-xl rounded-2xl p-8 space-y-6 fade-in-up">
-    {% csrf_token %}
-    {{form.as_p}}
-    <!-- <div>
-      <label class="block text-gray-700 font-semibold mb-2">Description</label>
-      <textarea rows="4" placeholder="Décrivez brièvement la fuite..."class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-black focus:outline-none"></textarea>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Indicateur d'étapes -->
+  <div class="step-indicator mb-8">
+    <div class="step active">
+      <div class="step-number">1</div>
+      <div class="step-text">Informations</div>
     </div>
-    <div>
-      <label class="block text-gray-700 font-semibold mb-2">Photo</label>
-      <input type="file" name="photo" id="photo" accept="image/*" capture="environment" class="w-full text-gray-700 bg-gray-50 border border-gray-300 rounded-lg cursor-pointer focus:outline-none" required>
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-text">Vérification</div>
     </div>
-    <input type="hidden" name="latitude" id="latitude">
-    <input type="hidden" name="longitude" id="longitude"> -->
-    <button type="submit" class="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:scale-105 transition transform">Envoyer le signalement</button>
-  </form>
-</section>
-{% endblock %}
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-text">Détails</div>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="messages">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+    {% if error %}
+      <div class="alert alert-error">
+        {{ error }}
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Titre principal -->
+  <div class="text-center mb-8">
+    <h1 class="text-4xl lg:text-5xl font-bold text-white mb-4 animate-fadeIn">
+      🚰 Signaler une Fuite d'Eau
+    </h1>
+    <p class="text-lg text-blue-100 animate-fadeInUp">
+      Aidez-nous à préserver cette ressource précieuse
+    </p>
+  </div>
+
+  <!-- Formulaire principal -->
+  <div class="form-container animate-slideInRight">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6" id="signalementForm">
+      {% csrf_token %}
+      
+      <!-- Rendu personnalisé des champs du formulaire -->
+      {% for field in form %}
+        <div class="form-group">
+          <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+            {% if field.field.required %}
+              <span class="text-red-500">*</span>
+            {% endif %}
+          </label>
+          
+          {% if field.name == 'description' %}
+            <!-- Zone de texte pour la description -->
+            <textarea 
+              name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-textarea"
+              placeholder="Décrivez la fuite : localisation exacte, gravité, etc."
+              style="color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+              {% if field.field.required %}required{% endif %}
+            >{{ field.value|default_if_none:"" }}</textarea>
+            
+          {% elif field.name == 'photo' %}
+            <!-- Champ fichier personnalisé -->
+            <div class="file-input-wrapper">
+              <div class="file-input" onclick="document.getElementById('{{ field.id_for_label }}').click()">
+                <div class="text-center py-4">
+                  <svg class="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                  </svg>
+                  <p class="text-gray-600 font-medium">Ajouter une photo</p>
+                  <p class="text-sm text-gray-400">JPG, PNG (max. 5MB)</p>
+                </div>
+                <input 
+                  type="file" 
+                  name="{{ field.name }}" 
+                  id="{{ field.id_for_label }}"
+                  accept="image/*" 
+                  capture="environment"
+                  {% if field.field.required %}required{% endif %}
+                  onchange="previewImage(this)"
+                >
+              </div>
+              <!-- Aperçu de l'image -->
+              <div id="imagePreview" class="hidden mt-4">
+                <img id="previewImg" class="w-full max-w-xs mx-auto rounded-lg shadow-md" alt="Aperçu">
+              </div>
+            </div>
+            
+          {% elif field.name == 'commune' or field.name == 'quartier' %}
+            <!-- Select personnalisé -->
+            <select 
+              name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-select"
+              style="color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+              {% if field.field.required %}required{% endif %}
+              {% if field.name == 'quartier' %}onchange="updateQuartiers()"{% endif %}
+            >
+              <option value="">Sélectionnez...</option>
+              {% for choice in field.field.choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>
+                  {{ choice.1 }}
+                </option>
+              {% endfor %}
+            </select>
+            
+          {% elif field.name == 'is_owner' %}
+            <!-- Checkbox stylé -->
+            <div class="flex items-center space-x-3">
+              <input 
+                type="checkbox" 
+                name="{{ field.name }}" 
+                id="{{ field.id_for_label }}"
+                class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                {% if field.value %}checked{% endif %}
+              >
+              <span class="text-gray-700">Je suis propriétaire du logement</span>
+            </div>
+            
+          {% elif field.name == 'address' %}
+            <!-- Champ adresse avec bouton géolocalisation -->
+            <div class="address-input-wrapper">
+              <input 
+                type="text" 
+                name="{{ field.name }}" 
+                id="{{ field.id_for_label }}"
+                class="form-input pr-32"
+                value="{{ field.value|default_if_none:"" }}"
+                style="color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+                {% if field.field.required %}required{% endif %}
+                placeholder="Adresse exacte de la fuite"
+              >
+              <button 
+                type="button" 
+                class="use-location-btn"
+                onclick="getMyLocation()"
+                id="locationBtn"
+              >
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Ma position
+              </button>
+            </div>
+            <!-- Indicateur de statut géolocalisation -->
+            <div id="locationStatus" class="mt-2 text-sm hidden">
+              <span id="locationText"></span>
+            </div>
+            
+          {% else %}
+            <!-- Champs texte standard -->
+            <input 
+              type="{% if field.name == 'email' %}email{% elif field.name == 'phone' %}tel{% else %}text{% endif %}" 
+              name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-input"
+              value="{{ field.value|default_if_none:"" }}"
+              style="color: #000000 !important; -webkit-text-fill-color: #000000 !important;"
+              {% if field.field.required %}required{% endif %}
+              {% if field.name == 'phone' %}
+                placeholder="+243 XXX XXX XXX"
+              {% elif field.name == 'email' %}
+                placeholder="votre@email.com"
+              {% elif field.name == 'complaint_name' %}
+                placeholder="Votre nom complet"
+              {% endif %}
+            >
+          {% endif %}
+          
+          <!-- Affichage des erreurs -->
+          {% if field.errors %}
+            <div class="mt-1 text-sm text-red-600">
+              {% for error in field.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <!-- Aide contextuelle -->
+          {% if field.help_text %}
+            <div class="mt-1 text-sm text-gray-500">
+              {{ field.help_text }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Géolocalisation (cachée) -->
+      <input type="hidden" name="latitude" id="latitude">
+      <input type="hidden" name="longitude" id="longitude">
+
+      <!-- Bouton de soumission -->
+      <div class="mt-8">
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-full btn-lg"
+          id="submitBtn"
+        >
+          <span class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+            Envoyer le signalement
+          </span>
+        </button>
+      </div>
+
+      <!-- Loader -->
+      <div id="loadingSpinner" class="hidden mt-4">
+        <div class="spinner"></div>
+        <p class="text-center mt-2 text-gray-600">Envoi en cours...</p>
+      </div>
+    </form>
+  </div>
+
+  <!-- Informations supplémentaires -->
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="card text-center">
+      <div class="text-blue-500 text-3xl mb-3">⚡</div>
+      <h3 class="font-semibold mb-2">Rapide</h3>
+      <p class="text-gray-600 text-sm">Signalement traité en moins de 24h</p>
+    </div>
+    
+    <div class="card text-center">
+      <div class="text-green-500 text-3xl mb-3">🔒</div>
+      <h3 class="font-semibold mb-2">Sécurisé</h3>
+      <p class="text-gray-600 text-sm">Vos données sont protégées</p>
+    </div>
+    
+    <div class="card text-center">
+      <div class="text-purple-500 text-3xl mb-3">📱</div>
+      <h3 class="font-semibold mb-2">Simple</h3>
+      <p class="text-gray-600 text-sm">Interface intuitive et mobile</p>
+    </div>
+  </div>
+</div>
+
 <script>
-  if (navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(position){
+// Géolocalisation automatique
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
       document.getElementById('latitude').value = position.coords.latitude;
       document.getElementById('longitude').value = position.coords.longitude;
-    }, function() {
-      alert("impossible d'obtenir votre position. Activez la localisation.");
+    }, function(error) {
+      console.log("Erreur de géolocalisation:", error.message);
     });
-  } else {
-    alert("la géolocalisation n'est pas prise en charge par votre navigateur.");
   }
+}
+
+// Fonction pour utiliser la position actuelle dans l'adresse
+function getMyLocation() {
+  const locationBtn = document.getElementById('locationBtn');
+  const locationStatus = document.getElementById('locationStatus');
+  const locationText = document.getElementById('locationText');
+  const addressInput = document.getElementById('id_address');
+  
+  if (navigator.geolocation) {
+    // Afficher le loading
+    locationBtn.innerHTML = `
+      <svg class="w-4 h-4 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8.485-8.485l-1.414-1.414M4.929 4.929l-1.414 1.414m1.414 10.142l-1.414 1.414M18.364 5.636l-1.414 1.414M7 12H5m14 0h-2"></path>
+      </svg>
+      Localisation...
+    `;
+    locationBtn.disabled = true;
+    locationStatus.classList.remove('hidden');
+    locationText.innerHTML = '<span class="text-blue-600">🔍 Recherche de votre position...</span>';
+    
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        
+        // Mettre à jour les coordonnées cachées
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+        
+        // Utiliser l'API de géocodage inverse pour obtenir l'adresse
+        reverseGeocode(lat, lng, addressInput, locationStatus, locationText, locationBtn);
+      },
+      function(error) {
+        handleLocationError(error, locationStatus, locationText, locationBtn);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  } else {
+    locationStatus.classList.remove('hidden');
+    locationText.innerHTML = '<span class="text-red-600">❌ Géolocalisation non supportée par votre navigateur</span>';
+  }
+}
+
+// Fonction de géocodage inverse
+function reverseGeocode(lat, lng, addressInput, locationStatus, locationText, locationBtn) {
+  // Utiliser l'API Nominatim d'OpenStreetMap (gratuite)
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&accept-language=fr`;
+  
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data && data.display_name) {
+        // Extraire une adresse lisible
+        const address = formatAddress(data);
+        addressInput.value = address;
+        
+        locationText.innerHTML = `<span class="text-green-600">✅ Position trouvée et adresse remplie automatiquement</span>`;
+        
+        // Auto-masquer le message après 3 secondes
+        setTimeout(() => {
+          locationStatus.classList.add('hidden');
+        }, 3000);
+      } else {
+        locationText.innerHTML = `<span class="text-yellow-600">⚠️ Position trouvée, mais adresse non disponible. Coordonnées: ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>`;
+        addressInput.value = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+      }
+    })
+    .catch(error => {
+      console.error('Erreur géocodage:', error);
+      locationText.innerHTML = `<span class="text-yellow-600">⚠️ Position trouvée. Coordonnées: ${lat.toFixed(6)}, ${lng.toFixed(6)}</span>`;
+      addressInput.value = `Lat: ${lat.toFixed(6)}, Lng: ${lng.toFixed(6)}`;
+    })
+    .finally(() => {
+      // Restaurer le bouton
+      locationBtn.innerHTML = `
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+        Ma position
+      `;
+      locationBtn.disabled = false;
+    });
+}
+
+// Formater l'adresse depuis les données Nominatim
+function formatAddress(data) {
+  const addr = data.address;
+  let parts = [];
+  
+  // Numéro de maison et rue
+  if (addr.house_number && addr.road) {
+    parts.push(`${addr.house_number} ${addr.road}`);
+  } else if (addr.road) {
+    parts.push(addr.road);
+  }
+  
+  // Quartier/Suburb
+  if (addr.suburb) {
+    parts.push(addr.suburb);
+  } else if (addr.neighbourhood) {
+    parts.push(addr.neighbourhood);
+  }
+  
+  // Ville/City
+  if (addr.city) {
+    parts.push(addr.city);
+  } else if (addr.town) {
+    parts.push(addr.town);
+  } else if (addr.municipality) {
+    parts.push(addr.municipality);
+  }
+  
+  // État/Province
+  if (addr.state) {
+    parts.push(addr.state);
+  }
+  
+  // Pays
+  if (addr.country && addr.country !== 'République démocratique du Congo') {
+    parts.push(addr.country);
+  }
+  
+  return parts.length > 0 ? parts.join(', ') : data.display_name;
+}
+
+// Gestion des erreurs de géolocalisation
+function handleLocationError(error, locationStatus, locationText, locationBtn) {
+  let errorMessage = '';
+  
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+      errorMessage = '<span class="text-red-600">❌ Accès à la géolocalisation refusé. Autorisez l\'accès dans votre navigateur.</span>';
+      break;
+    case error.POSITION_UNAVAILABLE:
+      errorMessage = '<span class="text-red-600">❌ Position non disponible. Vérifiez votre connexion.</span>';
+      break;
+    case error.TIMEOUT:
+      errorMessage = '<span class="text-red-600">⏰ Délai de géolocalisation dépassé. Réessayez.</span>';
+      break;
+    default:
+      errorMessage = '<span class="text-red-600">❌ Erreur inconnue de géolocalisation.</span>';
+      break;
+  }
+  
+  locationText.innerHTML = errorMessage;
+  
+  // Restaurer le bouton
+  locationBtn.innerHTML = `
+    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+    </svg>
+    Ma position
+  `;
+  locationBtn.disabled = false;
+}
+
+// Aperçu de l'image
+function previewImage(input) {
+  const preview = document.getElementById('imagePreview');
+  const previewImg = document.getElementById('previewImg');
+  
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      preview.classList.remove('hidden');
+    };
+    
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+// Mise à jour des quartiers selon la commune
+function updateQuartiers() {
+  const commune = document.querySelector('select[name="commune"]').value;
+  const quartierSelect = document.querySelector('select[name="quartier"]');
+  
+  // Reset quartiers
+  quartierSelect.innerHTML = '<option value="">Sélectionnez un quartier...</option>';
+  
+  // Logique pour charger les quartiers selon la commune
+  // Cette partie devra être adaptée selon vos données
+}
+
+// Animation du formulaire
+function animateForm() {
+  const formGroups = document.querySelectorAll('.form-group');
+  formGroups.forEach((group, index) => {
+    group.style.opacity = '0';
+    group.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      group.style.transition = 'all 0.5s ease';
+      group.style.opacity = '1';
+      group.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+}
+
+// Gestion de la soumission
+document.getElementById('signalementForm').addEventListener('submit', function(e) {
+  const submitBtn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('loadingSpinner');
+  
+  submitBtn.disabled = true;
+  submitBtn.classList.add('opacity-50');
+  spinner.classList.remove('hidden');
+});
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+  getLocation();
+  animateForm();
+});
 </script>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/forms-enhancement.js' %}"></script>
+{% endblock %}

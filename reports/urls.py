@@ -24,5 +24,18 @@ urlpatterns = [
     path('base/', views.base, name='base'),
     path('signaler/', views.signaler1, name='signaler.step1'),
     path('signaler/<int:pk>', views.signaler2, name='signaler.step2'),
-    path('signaler/<int:pk>/otp', views.verifyotp, name='verify_phone_number'),
+    path('signaler/<int:pk>/otp', views.verifyotp, name='verify_otp'),
+    path('suivi/<str:otp_code>/', views.suivi_signalement, name='suivi_signalement'),
+    path('recherche/', views.recherche_signalement, name='recherche_signalement'),
+    path('test-css/', views.test_css, name='test_css'),
+    
+    # URLs Agent
+    path('agent/', views.agent_login, name='agent_login'),
+    path('agent/test/', views.agent_test, name='agent_test'),
+    path('agent/dashboard/', views.agent_dashboard, name='agent_dashboard'),
+    path('agent/logout/', views.agent_logout, name='agent_logout'),
+    path('agent/missions/', views.agent_missions_list, name='agent_missions_list'),
+    path('agent/mission/<int:mission_id>/', views.agent_mission_detail, name='agent_mission_detail'),
+    path('agent/init/', views.init_agents, name='init_agents'),
+    path('agent/clean/', views.clean_agents, name='clean_agents'),
 ]
