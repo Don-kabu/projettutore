@@ -68,35 +68,126 @@ class AgentProfile(models.Model):
     Profil d'agent basé sur les données d'adresse.py
     Un agent est responsable d'un ou plusieurs quartiers
     """
+    ROLE_CHOICES = [
+        ('quartier', 'Responsable de Quartier'),
+        ('commune', 'Responsable de Commune'),
+        ('admin', 'Administrateur'),
+    ]
+    
     email = models.EmailField()
     phone = models.CharField(max_length=15)
     commune = models.CharField(max_length=100, choices=[(k, k) for k in adresse.keys()])
     quartiers_responsable = models.JSONField(default=list, help_text="Liste des quartiers dont l'agent est responsable")
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='quartier', help_text="Rôle et niveau de permissions")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
     
+    class Meta:
+        verbose_name = "Profil Agent"
+        verbose_name_plural = "Profils Agents"
+        ordering = ['commune', 'role', 'email']
+    
     def __str__(self):
-        return f"Agent {self.email} - {self.commune}"
+        role_display = self.get_role_display()
+        return f"{role_display} - {self.email} ({self.commune})"
+    
+    def can_modify_mission(self, mission):
+        """
+        Vérifie si l'agent peut modifier une mission
+        - Responsable de quartier : peut modifier les missions de ses quartiers
+        - Responsable de commune : LECTURE SEULE (ne peut pas modifier)
+        - Admin : peut tout modifier
+        """
+        if self.role == 'admin':
+            return True
+        elif self.role == 'quartier':
+            # Peut modifier si la mission concerne un de ses quartiers
+            return (mission.fuite.commune == self.commune and 
+                   mission.fuite.quartier in self.quartiers_responsable)
+        elif self.role == 'commune':
+            # Responsable de commune : LECTURE SEULE uniquement
+            return False
+        return False
+    
+    def can_view_mission(self, mission):
+        """
+        Vérifie si l'agent peut voir une mission
+        - Responsable de quartier : voit ses quartiers
+        - Responsable de commune : voit toute sa commune
+        - Admin : voit tout
+        """
+        if self.role == 'admin':
+            return True
+        elif self.role in ['quartier', 'commune']:
+            return mission.fuite.commune == self.commune
+        return False
     
     def get_missions_assigned(self):
-        """Retourne toutes les missions assignées à cet agent"""
-        return Mission.objects.filter(
-            resolver_email=self.email,
-            fuite__commune=self.commune
-        ).order_by('-created_at')
+        """Retourne toutes les missions visibles pour cet agent"""
+        if self.role == 'admin':
+            return Mission.objects.all().order_by('-created_at')
+        elif self.role == 'commune':
+            # Responsable de commune voit toute sa commune
+            return Mission.objects.filter(
+                fuite__commune=self.commune
+            ).order_by('-created_at')
+        elif self.role == 'quartier':
+            # Responsable de quartier voit seulement ses quartiers
+            return Mission.objects.filter(
+                fuite__commune=self.commune,
+                fuite__quartier__in=self.quartiers_responsable
+            ).order_by('-created_at')
+        return Mission.objects.none()
     
     def get_missions_pending(self):
-        """Retourne les missions en attente"""
+        """Retourne les missions en attente visibles"""
         return self.get_missions_assigned().filter(mission_status='pending')
     
     def get_missions_in_progress(self):
-        """Retourne les missions en cours"""
+        """Retourne les missions en cours visibles"""
         return self.get_missions_assigned().filter(mission_status='in_progress')
     
     def get_missions_resolved(self):
-        """Retourne les missions résolues"""
+        """Retourne les missions résolues visibles"""
         return self.get_missions_assigned().filter(mission_status='resolved')
+    
+    def get_quarterly_stats(self):
+        """Statistiques pour les responsables de quartier"""
+        if self.role == 'quartier':
+            missions = self.get_missions_assigned()
+            return {
+                'total': missions.count(),
+                'pending': missions.filter(mission_status='pending').count(),
+                'in_progress': missions.filter(mission_status='in_progress').count(),
+                'resolved': missions.filter(mission_status='resolved').count(),
+                'quartiers': self.quartiers_responsable
+            }
+        return None
+    
+    def get_commune_stats(self):
+        """Statistiques pour les responsables de commune (lecture seule)"""
+        if self.role in ['commune', 'admin']:
+            missions = Mission.objects.filter(fuite__commune=self.commune)
+            quartiers_stats = {}
+            
+            for quartier in adresse.get(self.commune, []):
+                quartier_missions = missions.filter(fuite__quartier=quartier)
+                quartiers_stats[quartier] = {
+                    'total': quartier_missions.count(),
+                    'pending': quartier_missions.filter(mission_status='pending').count(),
+                    'in_progress': quartier_missions.filter(mission_status='in_progress').count(),
+                    'resolved': quartier_missions.filter(mission_status='resolved').count(),
+                }
+            
+            return {
+                'total': missions.count(),
+                'pending': missions.filter(mission_status='pending').count(),
+                'in_progress': missions.filter(mission_status='in_progress').count(),
+                'resolved': missions.filter(mission_status='resolved').count(),
+                'quartiers': quartiers_stats
+            }
+        return None
     
     @classmethod
     def create_agents_from_adresse(cls):

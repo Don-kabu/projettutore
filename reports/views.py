@@ -463,28 +463,53 @@ def agent_required(view_func):
 @agent_required
 def agent_dashboard(request):
     """
-    Dashboard principal de l'agent
+    Dashboard principal de l'agent avec permissions basées sur le rôle
     """
     try:
         agent = AgentProfile.objects.get(id=request.session['agent_id'])
         
-        # Statistiques
-        missions_total = agent.get_missions_assigned().count()
-        missions_pending = agent.get_missions_pending().count()
-        missions_in_progress = agent.get_missions_in_progress().count()
-        missions_resolved = agent.get_missions_resolved().count()
+        # Statistiques selon le rôle
+        if agent.role == 'quartier':
+            # Statistiques spécifiques aux quartiers de l'agent
+            stats = agent.get_quarterly_stats()
+            context = {
+                'agent': agent,
+                'stats': stats,
+                'can_modify': True,  # Responsable de quartier peut modifier
+                'view_type': 'quartier',
+                'recent_missions': agent.get_missions_assigned()[:5],
+            }
         
-        # Missions récentes
-        recent_missions = agent.get_missions_assigned()[:10]
+        elif agent.role == 'commune':
+            # Vue d'ensemble de la commune (lecture seule)
+            stats = agent.get_commune_stats()
+            context = {
+                'agent': agent,
+                'stats': stats,
+                'can_modify': False,  # Responsable de commune : lecture seule
+                'view_type': 'commune',
+                'recent_missions': agent.get_missions_assigned()[:10],
+            }
         
-        context = {
-            'agent': agent,
-            'missions_total': missions_total,
-            'missions_pending': missions_pending,
-            'missions_in_progress': missions_in_progress,
-            'missions_resolved': missions_resolved,
-            'recent_missions': recent_missions,
-        }
+        elif agent.role == 'admin':
+            # Vue administrateur complète
+            all_missions = Mission.objects.all()
+            context = {
+                'agent': agent,
+                'stats': {
+                    'total': all_missions.count(),
+                    'pending': all_missions.filter(mission_status='pending').count(),
+                    'in_progress': all_missions.filter(mission_status='in_progress').count(),
+                    'resolved': all_missions.filter(mission_status='resolved').count(),
+                },
+                'can_modify': True,  # Admin peut tout modifier
+                'view_type': 'admin',
+                'recent_missions': all_missions.order_by('-created_at')[:10],
+            }
+        
+        else:
+            messages.error(request, "❌ Rôle non reconnu.")
+            return redirect('agent_login')
         
         return render(request, 'agent/dashboard.html', context)
         
@@ -557,15 +582,25 @@ def agent_missions_list(request):
 @agent_required
 def agent_mission_detail(request, mission_id):
     """
-    Détail et mise à jour d'une mission
+    Détail et mise à jour d'une mission avec permissions basées sur le rôle
     """
-    from .models import AgentProfile
-    
     try:
         agent = AgentProfile.objects.get(id=request.session['agent_id'])
-        mission = get_object_or_404(Mission, pk=mission_id, resolver_email=agent.email)
+        mission = get_object_or_404(Mission, pk=mission_id)
+        
+        # Vérifier les permissions de visualisation
+        if not agent.can_view_mission(mission):
+            messages.error(request, "❌ Vous n'avez pas l'autorisation de voir cette mission.")
+            return redirect('agent_dashboard')
+        
+        # Vérifier les permissions de modification
+        can_modify = agent.can_modify_mission(mission)
         
         if request.method == 'POST':
+            if not can_modify:
+                messages.error(request, "❌ Vous n'avez pas l'autorisation de modifier cette mission (mode lecture seule).")
+                return redirect('agent_mission_detail', mission_id=mission_id)
+            
             action = request.POST.get('action')
             
             if action == 'start':
@@ -587,14 +622,25 @@ def agent_mission_detail(request, mission_id):
                 mission.mission_status = 'cancelled'
                 mission.save()
                 send_status_update_email(mission.fuite, 'cancelled', 
-                    f"Mission annulée par l'équipe de {agent.commune}. Veuillez nous contacter pour plus d'informations.")
+                    f"Mission annulée par l'équipe de {agent.commune}.")
                 messages.success(request, "❌ Mission annulée.")
+                
+            elif action == 'comment':
+                comment = request.POST.get('comment', '').strip()
+                if comment:
+                    send_status_update_email(mission.fuite, 'comment', 
+                        f"Commentaire de l'équipe {agent.commune}: {comment}")
+                    messages.info(request, "📝 Commentaire envoyé !")
                 
             return redirect('agent_mission_detail', mission_id=mission.pk)
         
         context = {
             'agent': agent,
             'mission': mission,
+            'fuite': mission.fuite,
+            'can_modify': can_modify,
+            'role_display': agent.get_role_display(),
+            'is_readonly': not can_modify,
         }
         
         return render(request, 'agent/mission_detail.html', context)

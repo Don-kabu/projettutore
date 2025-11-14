@@ -61,26 +61,123 @@ Cette application Django permet aux citoyens de **signaler des fuites d'eau** da
 
 ## 🏗️ Architecture
 
+### 📁 Arborescence Complète du Projet
+
 ```
-signalement-fuite-eau/
-├── 📁 Signalement/          # Configuration principale Django
-│   ├── settings.py          # Configuration de l'application
-│   ├── urls.py              # URLs principales
-│   └── wsgi.py              # Configuration WSGI
-├── 📁 reports/              # Application principale
-│   ├── 📁 models.py         # Modèles de données
-│   ├── 📁 views.py          # Logique métier
-│   ├── 📁 forms.py          # Formulaires Django
-│   ├── 📁 urls.py           # URLs de l'app
-│   ├── 📁 admin.py          # Configuration admin
-│   ├── 📁 utils.py          # Utilitaires (emails)
-│   ├── 📁 adresse.py        # Données géographiques
-│   └── 📁 templates/        # Templates HTML
-├── 📁 static/               # Fichiers statiques (CSS, JS)
-├── 📁 fuites/              # Photos uploadées
-├── 📁 env/                 # Environnement virtuel Python
-└── 📄 db.sqlite3          # Base de données SQLite
+projettutore/
+├── 📄 .gitignore                    # Fichiers ignorés par Git
+├── 📄 CHANGELOG.md                  # Journal des modifications
+├── 📄 EMAIL_TEMPLATES_README.md     # Documentation des templates email
+├── 📄 QUICKSTART.md                 # Guide de démarrage rapide
+├── 📄 README.md                     # Documentation principale (ce fichier)
+├── 📄 TECHNICAL_GUIDE.md            # Guide technique détaillé
+├── 📄 manage.py                     # Script de gestion Django
+├── 📄 requirements.txt              # Dépendances Python
+├── 📄 db.sqlite3                    # Base de données SQLite
+│
+├── 📁 Signalement/                  # 🏛️ Configuration principale Django
+│   ├── __init__.py
+│   ├── asgi.py                      # Configuration ASGI (async)
+│   ├── settings.py                  # Configuration de l'application
+│   ├── urls.py                      # URLs principales du projet
+│   ├── views.py                     # Vues globales
+│   ├── wsgi.py                      # Configuration WSGI
+│   └── __pycache__/                 # Cache Python compilé
+│
+├── 📁 reports/                      # 🚰 Application principale de signalement
+│   ├── __init__.py
+│   ├── admin.py                     # Interface d'administration Django
+│   ├── adresse.py                   # Données géographiques (communes/quartiers)
+│   ├── apps.py                      # Configuration de l'application
+│   ├── forms.py                     # Formulaires Django (FuiteForm, complaintForm)
+│   ├── models.py                    # Modèles de données (Fuite, Mission, AgentProfile)
+│   ├── tests.py                     # Tests unitaires
+│   ├── urls.py                      # URLs de l'application reports
+│   ├── utils.py                     # Utilitaires (emails, OTP, notifications)
+│   ├── views.py                     # Logique métier et contrôleurs
+│   ├── __pycache__/                 # Cache Python compilé
+│   │
+│   ├── 📁 migrations/               # 🗃️ Migrations de base de données
+│   │   ├── __init__.py
+│   │   ├── 0001_initial.py          # Migration initiale
+│   │   ├── 0002_fuite_delete_report.py
+│   │   ├── 0003_remove_fuite_latitude_remove_fuite_longitude_and_more.py
+│   │   ├── 0004_fuite_is_owner.py
+│   │   ├── 0005_rename_comname_fuite_complaint_name_fuite_commune_and_more.py
+│   │   ├── 0006_alter_fuite_quartier.py
+│   │   ├── 0007_alter_fuite_quartier.py
+│   │   ├── 0008_alter_fuite_quartier.py
+│   │   ├── 0009_alter_fuite_quartier.py
+│   │   ├── 0010_fuite_opt.py
+│   │   ├── 0011_fuite_verified_opt.py
+│   │   ├── 0012_mission.py
+│   │   ├── 0013_mission_resolver_email_mission_resolver_phone.py
+│   │   ├── 0014_fuite_email_alter_mission_resolver_email_and_more.py
+│   │   ├── 0015_agentprofile_mission_mission_status.py
+│   │   ├── 0016_alter_agentprofile_email.py
+│   │   └── __pycache__/
+│   │
+│   ├── 📁 static/                   # 🎨 Fichiers statiques de l'app
+│   │   ├── 📁 css/
+│   │   │   ├── base.css             # Styles CSS de base (variables, layout responsive)
+│   │   │   ├── forms.css            # Styles spécifiques aux formulaires
+│   │   │   └── override-tailwind.css # Override pour forcer les couleurs de texte
+│   │   └── 📁 js/
+│   │       └── forms-enhancement.js  # JavaScript pour l'UX des formulaires
+│   │
+│   └── 📁 templates/                # 🌐 Templates HTML
+│       ├── base.html                # Template de base (header, nav, footer)
+│       ├── accueil.html             # Page d'accueil redesignée
+│       ├── accueil_old.html         # Ancienne version de l'accueil
+│       ├── signaler.html            # Formulaire de signalement principal
+│       ├── recherche_signalement.html # Recherche de signalements
+│       ├── suivi_signalement.html   # Suivi des signalements
+│       ├── test_css.html            # Page de test pour les styles CSS
+│       │
+│       ├── 📁 agent/                # 👷 Interface agent/technicien
+│       │   ├── dashboard.html       # Tableau de bord agent
+│       │   ├── init_success.html    # Page de succès d'initialisation
+│       │   ├── login.html           # Connexion agent
+│       │   ├── mission_detail.html  # Détails d'une mission
+│       │   ├── missions_list.html   # Liste des missions
+│       │   └── test.html            # Page de test agent
+│       │
+│       └── 📁 email/                # 📧 Templates d'emails HTML
+│           ├── base.html            # Template de base pour emails
+│           ├── confirmation.html    # Email de confirmation de signalement
+│           ├── mission_notification.html # Notification de nouvelle mission
+│           ├── otp_verification.html # Email de vérification OTP
+│           ├── status_update.html   # Mise à jour de statut de mission
+│           └── welcome.html         # Email de bienvenue
+│
+├── 📁 media/                        # 📸 Fichiers médias uploadés
+│   └── 📁 fuites/                   # Photos des fuites signalées
+│
+└── � static/                       # 🌐 Fichiers statiques globaux
+    └── [fichiers statiques collectés par Django]
 ```
+
+### 🔧 Architecture Technique
+
+#### Frontend Stack
+- **🎨 CSS Framework** : Tailwind CSS + CSS personnalisé
+- **🎭 Icons** : Heroicons, Feather Icons
+- **🔤 Polices** : Poppins (Google Fonts)
+- **📱 Responsive** : Mobile-first design
+- **⚡ JavaScript** : Vanilla JS pour l'UX
+
+#### Backend Stack  
+- **🐍 Framework** : Django 5.2
+- **🗃️ Base de données** : SQLite (dev) / PostgreSQL (prod)
+- **📧 Emails** : Django Email Backend (SMTP)
+- **📁 Fichiers** : Django FileField avec upload vers /media/
+- **🔐 Authentification** : Django Auth + système OTP personnalisé
+
+#### Sécurité & Performance
+- **🛡️ CSRF Protection** : Tokens Django
+- **🔒 XSS Protection** : Template escaping automatique
+- **📝 Validation** : Forms Django + validation JavaScript
+- **⚡ Cache** : Django template cache (futur)
 
 ---
 

@@ -1,0 +1,2 @@
+# Ce fichier maintient l'existence du dossier media dans Git
+# tout en permettant d'ignorer les fichiers uploadés par les utilisateurs
