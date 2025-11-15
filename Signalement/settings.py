@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-w-*b6s97b+e-_^g7%h5g4d-zqfsm1o3=insh85u(21g@$4sw-y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['projettutore.onrender.com']
 
 
 # Application definition
@@ -127,6 +127,3 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # Pour le développement, vous pouvez utiliser la console
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / 'media'
